@@ -1,0 +1,255 @@
+<html>
+    <head>   
+       <!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>	
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="plugins/chart.js/Chart.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+
+
+<style>
+body {
+   background-color:#EBEDEF ;
+}
+
+.card{
+margin-top:30px;
+height:200px;
+background-color:white;
+width:500px;
+padding:20px;
+border-radius:7px;
+}
+
+.h4{margin:20px;
+}
+
+.form-control{
+width: 400px;
+margin:10px;
+}
+
+.btn-info ,.btn-danger {margin:10px;
+}
+
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    </head>
+    <body class="text-center ">
+    		
+<div class="container  card  border-danger " >
+  <div class="card-header bg-transparent border-danger">Upload your Video here</div>
+  <div class="card-body text-danger">
+ 
+   <input id="video" name="video" type="file" data-show-upload="true" data-show-caption="true" class="file_multi_video file" accept="video/*">
+  </div>
+  <div class=" text-center border-danger">
+  <button  class="btn btn-danger    text-capitalize" id="upload">Analyse Video</button></div></div>
+<div class="row">
+<div class="col-12">
+                <video id="analysed_video" width='800' height='400'controls>
+				
+				</video>	</div>			
+     			
+		</div>	
+	
+   <div class="row">
+  <div class="col-md-1">
+  </div>
+		<!-- PIE CHART -->
+		<div class="col-md-5">
+			 <div class="card card-danger analysis" >
+              <div class="card-header">
+                <h3 class="card-title">Overall status percentage</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                </div>
+              </div>
+              <div class="card-body">
+                <canvas id="pieChart" ></canvas>
+              </div>  </div> 
+			</div>
+			<div class="col-md-5">
+         <div class="card card-danger analysis" >
+              <div class="card-header">
+                <h3 class="card-title">Variation of emotions over time</h3>
+
+                <div class="card-tools" >
+                  
+                </div>
+              </div>
+              <div class="card-body" id="timeChart">
+               
+              </div>  </div> 
+			</div>
+		
+        </div>
+			  <!-- Modal Start here-->
+<div class="modal fade bs-example-modal-sm" id="myPleaseWait" tabindex="-1"
+    role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span>Please Wait
+                 </h4>
+            </div>
+            <div class="modal-body">
+                <div class="spinner-border text-danger" role="status">
+  <span class="sr-only">Loading...</span>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+	<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI -->
+<script src="plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="dist/js/demo.js"></script>
+<!-- FLOT CHARTS -->
+<script src="plugins/flot/jquery.flot.js"></script>
+<!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+<script src="plugins/flot-old/jquery.flot.resize.min.js"></script>
+<!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+<script src="plugins/flot-old/jquery.flot.pie.min.js"></script>
+<!-- Page script -->
+
+    <script>
+var data=''
+var anger=0 ;
+var sadness=0;
+var happy=0;
+var surprise=0;
+var neutral=0;
+var fear=0; 
+var disgust=0;   
+$('#upload').on('click', function() {
+   $('#myPleaseWait').modal('show');
+	// Read selected files
+   var file_data = $('#video').prop('files')[0];   
+   var form_data = new FormData();                  
+   form_data.append('file', file_data)
+                               
+   var settings = {
+  "url": "http://127.0.0.1:5000/getAnalysedVideo",
+  "method": "POST",
+  "timeout": 0,
+  "processData": false,
+  "mimeType": "multipart/form-data",
+  "contentType": false,
+  "data": form_data,
+   "async": true
+};
+$.ajax(settings).done(function (response) {
+$('#myPleaseWait').modal('hide');
+  console.log(response); 
+  $('.analysis').css('height',400);
+ 
+  $("#analysed_video").html(''); 
+ data = JSON.parse(response);  
+ if ("angry" in data.duration_dict) 
+	anger=data.duration_dict["angry"];
+ if ("sad" in data.duration_dict) 
+	sadness=data.duration_dict["sad"];
+ if ("happy" in data.duration_dict)
+	happy=data.duration_dict["happy"]
+ if ("surprise" in data.duration_dict)
+	surprise=data.duration_dict["surprise"]
+ if ("neutral" in data.duration_dict)
+	neutral=data.duration_dict["neutral"]
+ if ("fear" in data.duration_dict)
+	fear=data.duration_dict["fear"]
+ if ("disgust" in data.duration_dict)
+	disgust=data.duration_dict["disgust"]
+ 
+ 
+ jQuery(data).each(function(i, item){ 
+     
+	 console.log(item.FilePath);
+	 console.log(item.duration_dict);
+     var markup = " <source  src="+ item.FilePath +">";
+            $("#analysed_video").append(markup); 
+			
+			var mark = " <img style=' max-height: 500px; max-width: 200%;' src='EmotionsWithTime.png'/>";
+            $("#timeChart").append(mark); 
+			anger= ((anger/item.duration)*100).toFixed(2);
+			sadness=((sadness/item.duration)*100).toFixed(2);
+			happy=((happy/item.duration)*100).toFixed(2);
+			surprise=((surprise/item.duration)*100).toFixed(2);
+			neutral=((neutral/item.duration)*100).toFixed(2);
+			fear=((fear/item.duration)*100).toFixed(2); 
+			disgust=((disgust/item.duration)*100).toFixed(2); 
+ 
+        
+})
+var donutData        = {
+      labels: [
+          'anger', 
+          'sadness',
+          'happy', 
+		  'surprise',
+          'neutral', 
+          'fear',
+		  'disgust'
+ 
+           
+      ],
+      datasets: [
+        {
+          data: [anger,sadness,happy,surprise,neutral,fear,disgust],
+          backgroundColor : ['#ff3333', '#3333ff', '#33ff33','#ffff33', '#ff9999', '#ff8000','#9933ff'],
+        }
+      ]
+    }
+    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+    var pieData        = donutData;
+    var pieOptions     = {
+      maintainAspectRatio : false,
+      responsive : true,
+    }
+    //Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    var pieChart = new Chart(pieChartCanvas, {
+      type: 'pie',
+      data: pieData,
+      options: pieOptions      
+    })
+	
+	
+});
+ 
+  
+});
+
+
+    </script>
+</html>

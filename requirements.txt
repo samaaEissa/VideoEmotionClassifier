@@ -1,0 +1,8 @@
+flask==1.1.2
+flask_cors==3.0.9
+jsonpickle==1.4.1
+cv2==4.4.0
+numpy==1.19.5
+tensorflow==2.4.1
+keras==2.4.3
+skimage==0.16.2
