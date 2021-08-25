@@ -17,9 +17,9 @@ feedback about their services and to improve it.
 
 Emotion state report
 
-![](D:/Faculty/Graduation Project/VideoEmotionClassifier_backup/VideoEmotionClassifier/Demo.PNG)
+![](Demo.PNG)
 
-![](D:/Faculty/Graduation Project/VideoEmotionClassifier_backup/VideoEmotionClassifier/statistics.PNG)
+![](statistics.PNG)
 
  
 
